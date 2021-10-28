@@ -10,10 +10,10 @@ public class ActorContainer : MonoBehaviour
     private readonly List<ActorBehavior> _actors = new List<ActorBehavior>();
     private MarbleContainer _containerReference;
 
-    void Start()
+    public void StartContainer(int worldDataActorsOnStart)
     {
         _containerReference = this.gameObject.GetComponent<MarbleContainer>();
-        for( var i = 0; i < 1000; i++ )
+        for( var i = 0; i < worldDataActorsOnStart; i++ )
         {
             var newActor = Instantiate( ActorPrefab, this.transform );
             newActor.ContainerReference = _containerReference;

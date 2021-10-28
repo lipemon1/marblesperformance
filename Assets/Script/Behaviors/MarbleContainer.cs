@@ -5,28 +5,30 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[RequireComponent(typeof(ActorContainer))]
 public class MarbleContainer : MonoBehaviour
 {
-    public MarbleBehavior MarblePrefab;
+    [SerializeField]
+    private MarbleBehavior marblePrefab;
 
     private readonly Dictionary<Guid,MarbleBehavior> _marbles = new Dictionary<Guid, MarbleBehavior>();
 
-    void Start()
+    public void StartContainer(int startMarblesAmount, int runtimeMarblesAmount)
     {
         StopAllCoroutines();
-        for( var i = 0; i < 500; i++ )
+        for( var i = 0; i < startMarblesAmount; i++ )
         {
             GenerateMarble();
         }
 
-        StartCoroutine( SpawnMarbles() );
+        StartCoroutine(SpawnMarbles(runtimeMarblesAmount));
     }
 
-    IEnumerator SpawnMarbles()
+    IEnumerator SpawnMarbles(int runtimeMarblesAmount)
     {
         while( true )
         {
-            if( _marbles.Values.Count < 1000 )
+            if( _marbles.Values.Count < runtimeMarblesAmount )
             {
                 for( var i = 0; i < 25; i++ )
                 {
@@ -40,7 +42,7 @@ public class MarbleContainer : MonoBehaviour
 
     private void GenerateMarble()
     {
-        var newMarble = Instantiate( MarblePrefab, new Vector3( Random.value, Random.value, Random.value ), Quaternion.identity );
+        var newMarble = Instantiate( marblePrefab, new Vector3( Random.value, Random.value, Random.value ), Quaternion.identity );
         newMarble.Id = Guid.NewGuid();
         newMarble.transform.parent = this.transform;
         newMarble.transform.position = Random.insideUnitSphere * 100f;
