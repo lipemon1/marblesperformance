@@ -15,3 +15,4 @@ MonoBehaviour:
   ActorsOnStart: 500
   MarblesOnStart: 500
   MarblesOnRuntime: 1000
+  MarblesOffset: 25

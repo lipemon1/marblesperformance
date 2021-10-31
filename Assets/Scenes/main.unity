@@ -259,6 +259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   marblePrefab: {fileID: 114174159924062632, guid: 0b6004934f3510945a0201df7cf96d13,
     type: 3}
+  _currentMarbles: 0
 --- !u!114 &768071702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,8 +272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 392352bd83b35d64aacc121c5e3e4f53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  marbleContainer: {fileID: 0}
-  actorContainer: {fileID: 0}
+  worldData: {fileID: 11400000, guid: 03bce7034d328234b8421358ff4ae9dd, type: 2}
 --- !u!4 &768071703
 Transform:
   m_ObjectHideFlags: 0
@@ -443,4 +443,47 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1548779917
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1548779919}
+  - component: {fileID: 1548779918}
+  m_Layer: 0
+  m_Name: Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1548779918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548779917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2cfec72ec901734dbfdd17913f2c97c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1548779919
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548779917}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Marbles.Pools;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,29 +12,33 @@ public class MarbleContainer : MonoBehaviour
     [SerializeField]
     private MarbleBehavior marblePrefab;
 
-    private readonly Dictionary<Guid,MarbleBehavior> _marbles = new Dictionary<Guid, MarbleBehavior>();
+    private Dictionary<Guid,MarbleBehavior> _marbles = new Dictionary<Guid, MarbleBehavior>();
+    [SerializeField] int _currentMarbles;
 
-    public void StartContainer(int startMarblesAmount, int runtimeMarblesAmount)
+    public void StartContainer(int startMarblesAmount, int runtimeMarblesAmount, int marblesOffset)
     {
         StopAllCoroutines();
-        for( var i = 0; i < startMarblesAmount; i++ )
-        {
-            GenerateMarble();
-        }
 
-        StartCoroutine(SpawnMarbles(runtimeMarblesAmount));
+        PoolController.StartMarblesPool(marblePrefab, this.transform, startMarblesAmount, ref _marbles);
+        // for( var i = 0; i < startMarblesAmount; i++ )
+        // {
+        //     GenerateMarble();
+        // }
+
+        StartCoroutine(SpawnMarbles(runtimeMarblesAmount, marblesOffset));
     }
 
-    IEnumerator SpawnMarbles(int runtimeMarblesAmount)
+    IEnumerator SpawnMarbles(int runtimeMarblesAmount, int marblesOffset)
     {
         while( true )
         {
             if( _marbles.Values.Count < runtimeMarblesAmount )
             {
-                for( var i = 0; i < 25; i++ )
-                {
-                   GenerateMarble();
-                }
+                PoolController.GetNewMarbles(marblesOffset, ref _marbles);
+                // for( var i = 0; i < marblesOffset; i++ )
+                // {
+                //    GenerateMarble();
+                // }
             }
             yield return new WaitForEndOfFrame();
             //yield return new WaitForSeconds( 0.5f );
@@ -42,7 +47,7 @@ public class MarbleContainer : MonoBehaviour
 
     private void GenerateMarble()
     {
-        var newMarble = Instantiate( marblePrefab, new Vector3( Random.value, Random.value, Random.value ), Quaternion.identity );
+        MarbleBehavior newMarble = Instantiate( marblePrefab, new Vector3( Random.value, Random.value, Random.value ), Quaternion.identity );
         newMarble.Id = Guid.NewGuid();
         newMarble.transform.parent = this.transform;
         newMarble.transform.position = Random.insideUnitSphere * 100f;
@@ -56,6 +61,8 @@ public class MarbleContainer : MonoBehaviour
             _marbles.Remove( marble.Id );
         }
         marble.WasClaimed = true;
+
+        _currentMarbles = _marbles.Values.Count;
     }
 
     public MarbleBehavior GetCloseMarbleToPosition( Vector3 position )

@@ -10,5 +10,6 @@ namespace Marbles.Initialization
         public int ActorsOnStart;
         public int MarblesOnStart;
         public int MarblesOnRuntime;
+        public int MarblesOffset;
     }   
 }

@@ -21,7 +21,7 @@ namespace Marbles.Initialization
 
         void Start()
         {
-            marbleContainer.StartContainer(worldData.MarblesOnStart, worldData.MarblesOnRuntime);
+            marbleContainer.StartContainer(worldData.MarblesOnStart, worldData.MarblesOnRuntime, worldData.MarblesOffset);
             actorContainer.StartContainer(worldData.ActorsOnStart);
         }
     }   

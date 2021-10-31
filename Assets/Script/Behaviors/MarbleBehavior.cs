@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using Marbles.Pools;
 using UnityEngine;
 
-public class MarbleBehavior : MonoBehaviour
+public class MarbleBehavior : MonoBehaviour, IPoolItem
 {
+    bool poolActive;
+    const int Steps = 60;
     public Guid Id { get; set; }
     private bool _wasClaimed;
     public bool WasClaimed
@@ -16,31 +19,36 @@ public class MarbleBehavior : MonoBehaviour
         }
         set
         {
+            if (!poolActive || !this.gameObject.activeInHierarchy) return;
+            
             if( !_wasClaimed && value )
             {
-                StartCoroutine( DisplayScore() );
+                StartCoroutine( DisplayScore(Steps) );
             }
             _wasClaimed = value;
         }
     }
-    public float Value { get; private set; }
 
+    [SerializeField]
     private Transform _textboxContainer;
+    
+    [SerializeField]
     private TextMesh _textmesh;
 
-    void Start()
+    void Awake()
     {
-        Value = UnityEngine.Random.value * 100f - 25f;
-        _textmesh = this.transform.Find( "TextboxContainer/Textbox/ScoreText" ).gameObject.GetComponent<TextMesh>();
-        _textmesh.text = Value.ToString( "##.#" );
-        _textboxContainer = this.transform.Find( "TextboxContainer" );
-        _textboxContainer.gameObject.SetActive( false );
-        WasClaimed = false;
+        if(_textboxContainer == null)
+            _textboxContainer = this.transform.Find("TextboxContainer");
+        
+        if(_textmesh == null)
+            _textmesh = this.transform.Find("TextboxContainer/Textbox/ScoreText").gameObject.GetComponent<TextMesh>();
+        
+        if(!_textboxContainer.gameObject.activeInHierarchy)
+            _textboxContainer.gameObject.SetActive( false );
     }
 
-    private IEnumerator DisplayScore()
+    private IEnumerator DisplayScore(int steps)
     {
-        var steps = 60;
         _textboxContainer.localScale = Vector3.zero;
         _textboxContainer.gameObject.SetActive( true );
         for( var i = 0; i < steps; i++ )
@@ -48,6 +56,23 @@ public class MarbleBehavior : MonoBehaviour
             _textboxContainer.localScale += Vector3.one / steps;
             yield return new WaitForEndOfFrame();
         }
-        Destroy(this.gameObject);
+        
+        Despawn();
+    }
+
+    public void Spawn()
+    {
+        poolActive = true;
+        float value = UnityEngine.Random.value * 100f - 25f;
+        _textmesh.text = value.ToString( "##.#" );
+        WasClaimed = false;
+    }
+
+    public void Despawn()
+    {
+        poolActive = false;
+        StopAllCoroutines();
+        PoolController.DespawnMarble(this);
+        // Destroy(this.gameObject);
     }
 }
