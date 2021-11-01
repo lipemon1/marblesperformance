@@ -27,11 +27,6 @@ namespace Marbles.Behaviors
 
     void Update()
     { 
-        RunState();   
-    }
-
-    public void RunState()
-    {
         Profiler.BeginSample("Switch Case");
         switch( _currentState )
         {
@@ -140,6 +135,11 @@ namespace Marbles.Behaviors
     public void SetDetectorSize(float detectorSize)
     {
         _marbleDetectorBehavior.transform.localScale = new Vector3(detectorSize, detectorSize, detectorSize);
+    }
+
+    public bool IsHunting()
+    {
+        return _currentState == State.Hunting;
     }
 }   
 }
