@@ -26,8 +26,7 @@ namespace Marbles.Behaviors
     Vector3 thisToTargetDirection;
 
     void Update()
-    { 
-        Profiler.BeginSample("Switch Case");
+    {
         switch( _currentState )
         {
             case State.Idle:
@@ -37,7 +36,6 @@ namespace Marbles.Behaviors
                 UpdateMoving();
                 break;
         }
-        Profiler.EndSample();
     }
 
 
@@ -46,38 +44,28 @@ namespace Marbles.Behaviors
         if(!_marbleDetectorBehavior.gameObject.activeInHierarchy)
             _marbleDetectorBehavior.gameObject.SetActive(true);
         
-        Profiler.BeginSample("Update Idle");
         if( _currentTarget == null )
             FindNewTarget();
-        Profiler.EndSample();
     }
 
     void ClearTargetDelegate()
     {
-        Profiler.BeginSample("ClearTargetDelegate");
         if (_currentTarget != null)
-        {
             _currentTarget.OnMarbleClaimed -= ClearTargetDelegate;   
-        }
 
         ResetTarget();
-        Profiler.EndSample();
     }
 
     void FindNewTarget()
     {
-        Profiler.BeginSample("FindNewTarget");
-        Profiler.BeginSample("GetClosesMarble");
         _currentTarget = _marbleDetectorBehavior.GetClosestMarble(ContainerReference);
-        Profiler.EndSample();
-        
+
         if (_currentTarget != null)
         {
             _currentTarget.TargetThisMarble();
             _currentTarget.OnMarbleClaimed += ClearTargetDelegate;
             ChangeState(State.Hunting);
         }
-        Profiler.EndSample();
     }
 
     private void UpdateMoving()
@@ -90,42 +78,22 @@ namespace Marbles.Behaviors
         
         if(_marbleDetectorBehavior.gameObject.activeInHierarchy)
             _marbleDetectorBehavior.gameObject.SetActive(false);
-
-        Profiler.BeginSample("Update Moving");
-        Profiler.BeginSample("Was Claimed");
+        
         if( _currentTarget.WasClaimed )
         {
             ResetTarget();
-            Profiler.EndSample();
-            Profiler.EndSample();
             return;
         }
-        Profiler.EndSample();
         
-        Profiler.BeginSample("Not Claimed");
-        Profiler.BeginSample("Target Calculation");
         thisToTarget = _currentTarget.transform.position - this.transform.position;
         thisToTargetDirection = thisToTarget.normalized;
-        Profiler.EndSample();
-        
-        Profiler.BeginSample("Target Movement");
         this.transform.position += thisToTargetDirection *10* Time.deltaTime;
-        Profiler.EndSample();
-
-        Profiler.BeginSample("Target Distance Check");
+        
         if( thisToTarget.magnitude < 0.1f )
         {
-            Profiler.BeginSample("Claim Marble");
             ContainerReference.ClaimMarble( _currentTarget );
-            Profiler.EndSample();
-            
-            Profiler.BeginSample("Reseting Target");
             ResetTarget();
-            Profiler.EndSample();
         }
-        Profiler.EndSample();
-        Profiler.EndSample();
-        Profiler.EndSample();
     }
 
     private void ResetTarget()

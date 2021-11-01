@@ -38,22 +38,11 @@ namespace Marbles.Behaviors
 
         public MarbleBehavior GetClosestMarble(MarbleContainer marbleContainer)
         {
-            Profiler.BeginSample("Searching target");
             if (MarblesInRange.Count > 0)
-            {
-                Profiler.BeginSample("GetFromRange");
                 newTargetBehavior = GetMarbleFromList(MarblesInRange, transform.position);
-                Profiler.EndSample();
-            }
 
             if (newTargetBehavior == null)
-            {
-                Profiler.BeginSample("GetFromAll");
                 newTargetBehavior = GetMarbleFromList(marbleContainer.GetAllMarbles(), transform.position);
-                Profiler.EndSample();
-            }
-
-            Profiler.EndSample();
 
             return newTargetBehavior;
         }

@@ -40,7 +40,8 @@ namespace Marbles.Behaviors
         {
             _textboxContainer.localScale = Vector3.zero;
             _textboxContainer.gameObject.SetActive(true);
-            for (var i = 0; i < steps; i++)
+            
+            for (int i = 0; i < steps; i++)
             {
                 _textboxContainer.localScale += Vector3.one / steps;
                 yield return new WaitForEndOfFrame();

@@ -41,32 +41,20 @@ namespace Marbles.Behaviors.Containers
                 {
                     PoolController.GetNewMarbles(marblesOffset, ref _marbles);
                 }
-
-                //yield return new WaitForEndOfFrame();
+                
                 yield return new WaitForSeconds(0.1f);
             }
         }
 
         public void ClaimMarble(MarbleBehavior marble)
         {
-            Profiler.BeginSample("Checking Key");
             if (_marbles.ContainsKey(marble.Id))
-            {
-                Profiler.BeginSample("Removing Key");
                 _marbles.Remove(marble.Id);
-                Profiler.EndSample();
-            }
 
-            Profiler.EndSample();
-
-            Profiler.BeginSample("Claim Marble");
             marble.ClaimThisMarble();
-            Profiler.EndSample();
-
-            Profiler.BeginSample("Debug Values");
+            
             if (_debugValues)
                 DebugValues();
-            Profiler.EndSample();
         }
 
         public Dictionary<Guid, MarbleBehavior>.ValueCollection GetAllMarbles()
