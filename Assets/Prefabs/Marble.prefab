@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4265861899044220}
   - component: {fileID: 23383892391747386}
   - component: {fileID: 102666782120281874}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ScoreText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 135949615027137904}
   - component: {fileID: 23518319365584904}
   - component: {fileID: 114174159924062632}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Marble
   m_TagString: Marble
   m_Icon: {fileID: 0}
@@ -207,7 +207,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4715000180614130}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TextboxContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 33670817298343536}
   - component: {fileID: 64546433499439732}
   - component: {fileID: 23693368818895972}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Textbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}

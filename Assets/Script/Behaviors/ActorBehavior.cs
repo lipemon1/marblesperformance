@@ -1,4 +1,6 @@
-﻿using Marbles.Behaviors.Containers;
+﻿using System;
+using System.Collections;
+using Marbles.Behaviors.Containers;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -13,17 +15,15 @@ namespace Marbles.Behaviors
     }
 
     public MarbleContainer ContainerReference { get; set; }
-    [SerializeField] private State _currentState;
-    [SerializeField] private MarbleBehavior _currentTarget;
+    
+    private State _currentState;
+    private MarbleBehavior _currentTarget;
     [SerializeField] private MarbleDetectorBehavior _marbleDetectorBehavior;
-    bool targetCalculated = false;
+
+    
+    //cache
     Vector3 thisToTarget;
     Vector3 thisToTargetDirection;
-
-    void Start()
-    {
-        ResetTarget();
-    }
 
     void Update()
     { 
@@ -40,8 +40,12 @@ namespace Marbles.Behaviors
         Profiler.EndSample();
     }
 
+
     private void UpdateIdle()
     {
+        if(!_marbleDetectorBehavior.gameObject.activeInHierarchy)
+            _marbleDetectorBehavior.gameObject.SetActive(true);
+        
         Profiler.BeginSample("Update Idle");
         if( _currentTarget == null )
             FindNewTarget();
@@ -83,6 +87,9 @@ namespace Marbles.Behaviors
             ResetTarget();
             return;
         }
+        
+        if(_marbleDetectorBehavior.gameObject.activeInHierarchy)
+            _marbleDetectorBehavior.gameObject.SetActive(false);
 
         Profiler.BeginSample("Update Moving");
         Profiler.BeginSample("Was Claimed");

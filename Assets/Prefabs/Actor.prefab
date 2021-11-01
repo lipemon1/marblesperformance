@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 33740747051966664}
   - component: {fileID: 23184093503806966}
   - component: {fileID: 114441377333821928}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Actor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,8 +91,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9729a7d9a26bf1b4183da0794566b8ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentState: 0
-  _currentTarget: {fileID: 0}
   _marbleDetectorBehavior: {fileID: 5354388502846425830}
 --- !u!1 &4205489393779140996
 GameObject:
@@ -108,7 +106,7 @@ GameObject:
   - component: {fileID: 2887196420850838038}
   - component: {fileID: 5354388502846425830}
   - component: {fileID: 2479258851675558668}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,6 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MarblesInRange: []
+  _collider: {fileID: 2887196420850838038}
 --- !u!54 &2479258851675558668
 Rigidbody:
   m_ObjectHideFlags: 0
