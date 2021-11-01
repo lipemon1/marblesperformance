@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Marbles.Behaviors.Containers;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public class ActorBehavior : MonoBehaviour
+namespace Marbles.Behaviors
+{
+ public class ActorBehavior : MonoBehaviour
 {
     enum State
     {
@@ -141,4 +141,5 @@ public class ActorBehavior : MonoBehaviour
     {
         _marbleDetectorBehavior.transform.localScale = new Vector3(detectorSize, detectorSize, detectorSize);
     }
+}   
 }

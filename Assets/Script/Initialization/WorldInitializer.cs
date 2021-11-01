@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Marbles.Behaviors.Containers;
+using UnityEngine;
 
 namespace Marbles.Initialization
 {
@@ -21,8 +22,8 @@ namespace Marbles.Initialization
 
         void Start()
         {
-            marbleContainer.StartContainer(worldData.MarblesOnStart, worldData.MarblesOnRuntime, worldData.MarblesOffset);
-            actorContainer.StartContainer(worldData.ActorsOnStart, worldData.DetectorSize);
+            marbleContainer.StartContainer(worldData);
+            actorContainer.StartContainer(worldData);
         }
     }   
 }
