@@ -2,6 +2,7 @@
 using System.Linq;
 using Marbles.Behaviors.Containers;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Marbles.Behaviors
 {
@@ -9,6 +10,9 @@ namespace Marbles.Behaviors
  {
      [SerializeField]
      public List<MarbleBehavior> MarblesInRange = new List<MarbleBehavior>();
+     
+     //cache
+     MarbleBehavior newTargetBehavior;
  
      void OnTriggerEnter(Collider other)
      {
@@ -34,17 +38,22 @@ namespace Marbles.Behaviors
  
      public MarbleBehavior GetClosestMarble(MarbleContainer marbleContainer)
      {
-         MarbleBehavior newTargetBehavior;
+         Profiler.BeginSample("Searching target");
          if (MarblesInRange.Count > 0)
          {
-             return GetMarbleFromList(MarblesInRange, transform.position);
+             Profiler.BeginSample("GetFromRange");
+             newTargetBehavior = GetMarbleFromList(MarblesInRange, transform.position);
+             Profiler.EndSample();
          }
-         else
+
+         if (newTargetBehavior == null)
+         {
+             Profiler.BeginSample("GetFromAll");
              newTargetBehavior = GetMarbleFromList(marbleContainer.GetAllMarbles(), transform.position);
- 
-         if(newTargetBehavior == null)
-             Debug.LogError("No new target found");
-         
+             Profiler.EndSample();
+         }
+         Profiler.EndSample();
+
          return newTargetBehavior;
      }
  
@@ -52,9 +61,9 @@ namespace Marbles.Behaviors
      {
          return marbles
              .OrderBy( m => ( position - m.transform.position ).magnitude )
-             .Take(10)
-             .OrderBy( m => m.Id )
-             .FirstOrDefault( m => !m.WasClaimed && !m.BeingTarget );
+             // .Take(10)
+             // .OrderBy( m => m.Id )
+             .FirstOrDefault( m => !m.WasClaimed && !m.BeingTarget);
      }
  }   
 }
