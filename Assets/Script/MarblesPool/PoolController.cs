@@ -51,6 +51,7 @@ namespace Marbles.Pools
             {
                 MarbleBehavior marbleToReturn = _poolItems[0];
                 _poolItems.Remove(marbleToReturn);
+                marbleToReturn.gameObject.SetActive(true);
                 return marbleToReturn;
             }
             else

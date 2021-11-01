@@ -46,6 +46,7 @@ namespace Marbles.Behaviors
                 yield return new WaitForEndOfFrame();
             }
 
+            _textboxContainer.gameObject.SetActive(false);
             Despawn();
         }
 
@@ -84,7 +85,6 @@ namespace Marbles.Behaviors
         {
             StopAllCoroutines();
             PoolController.DespawnMarble(this);
-            // Destroy(this.gameObject);
         }
     }
 }
