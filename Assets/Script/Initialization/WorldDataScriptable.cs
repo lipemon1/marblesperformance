@@ -11,5 +11,6 @@ namespace Marbles.Initialization
         public int MarblesOnStart;
         public int MarblesOnRuntime;
         public int MarblesOffset;
+        public float DetectorSize;
     }   
 }

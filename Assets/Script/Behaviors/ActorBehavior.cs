@@ -1,26 +1,38 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public class ActorBehavior : MonoBehaviour
 {
-    private enum State
+    enum State
     {
         Idle,
         Hunting,
     }
 
     public MarbleContainer ContainerReference { get; set; }
-    private State _currentState;
-    private MarbleBehavior _currentTarget;
+    [SerializeField] private State _currentState;
+    [SerializeField] private MarbleBehavior _currentTarget;
+    [SerializeField] private MarbleDetectorBehavior _marbleDetectorBehavior;
+    bool targetCalculated = false;
+    Vector3 thisToTarget;
+    Vector3 thisToTargetDirection;
 
     void Start()
     {
-        _currentState = State.Idle;
+        ResetTarget();
     }
 
     void Update()
+    { 
+        RunState();   
+    }
+
+    public void RunState()
     {
+        Profiler.BeginSample("Switch Case");
         switch( _currentState )
         {
             case State.Idle:
@@ -30,35 +42,103 @@ public class ActorBehavior : MonoBehaviour
                 UpdateMoving();
                 break;
         }
+        Profiler.EndSample();
     }
 
     private void UpdateIdle()
     {
-        _currentTarget = ContainerReference.GetCloseMarbleToPosition( this.transform.position );
-        if( _currentTarget != null )
+        Profiler.BeginSample("Update Idle");
+        if( _currentTarget == null )
+            FindNewTarget();
+        Profiler.EndSample();
+    }
+
+    void ClearTargetDelegate()
+    {
+        Profiler.BeginSample("ClearTargetDelegate");
+        if (_currentTarget != null)
         {
-            _currentState = State.Hunting;
+            _currentTarget.OnMarbleClaimed -= ClearTargetDelegate;   
         }
+
+        ResetTarget();
+        Profiler.EndSample();
+    }
+
+    void FindNewTarget()
+    {
+        Profiler.BeginSample("FindNewTarget");
+        Profiler.BeginSample("GetClosesMarble");
+        _currentTarget = _marbleDetectorBehavior.GetClosestMarble(ContainerReference);
+        Profiler.EndSample();
+        
+        if (_currentTarget != null)
+        {
+            _currentTarget.TargetThisMarble();
+            _currentTarget.OnMarbleClaimed += ClearTargetDelegate;
+            ChangeState(State.Hunting);
+        }
+        Profiler.EndSample();
     }
 
     private void UpdateMoving()
     {
-        if( _currentTarget.WasClaimed )
+        if (_currentTarget == null)
         {
-            _currentTarget = null;
-            _currentState = State.Idle;
+            ResetTarget();
             return;
         }
 
-        var thisToTarget = _currentTarget.transform.position - this.transform.position;
-        var thisToTargetDirection = thisToTarget.normalized;
+        Profiler.BeginSample("Update Moving");
+        Profiler.BeginSample("Was Claimed");
+        if( _currentTarget.WasClaimed )
+        {
+            ResetTarget();
+            Profiler.EndSample();
+            Profiler.EndSample();
+            return;
+        }
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Not Claimed");
+        Profiler.BeginSample("Target Calculation");
+        thisToTarget = _currentTarget.transform.position - this.transform.position;
+        thisToTargetDirection = thisToTarget.normalized;
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Target Movement");
         this.transform.position += thisToTargetDirection *10* Time.deltaTime;
+        Profiler.EndSample();
 
+        Profiler.BeginSample("Target Distance Check");
         if( thisToTarget.magnitude < 0.1f )
         {
+            Profiler.BeginSample("Claim Marble");
             ContainerReference.ClaimMarble( _currentTarget );
-            _currentTarget = null;
-            _currentState = State.Idle;
+            Profiler.EndSample();
+            
+            Profiler.BeginSample("Reseting Target");
+            ResetTarget();
+            Profiler.EndSample();
         }
+        Profiler.EndSample();
+        Profiler.EndSample();
+        Profiler.EndSample();
+    }
+
+    private void ResetTarget()
+    {
+        _currentTarget = null;
+        ChangeState(State.Idle);
+    }
+
+    void ChangeState(State newState)
+    {
+        _currentState = newState;
+    }
+
+    public void SetDetectorSize(float detectorSize)
+    {
+        _marbleDetectorBehavior.transform.localScale = new Vector3(detectorSize, detectorSize, detectorSize);
     }
 }

@@ -11,8 +11,17 @@ namespace Marbles.Pools
     {
         static List<MarbleBehavior> _poolItems;
 
+        [SerializeField] bool _debugValues;
+        [SerializeField] int _itemsOnPool;
+
         static MarbleBehavior _prefab;
         static Transform _parent;
+
+        void Update()
+        {
+            if(_debugValues)
+                _itemsOnPool = _poolItems.Count;
+        }
 
         public static void StartMarblesPool(MarbleBehavior prefab, Transform parent, int amount, ref Dictionary<Guid, MarbleBehavior> marblesDic)
         {
@@ -34,18 +43,15 @@ namespace Marbles.Pools
             newMarble.Id = Guid.NewGuid();
             newMarble.transform.parent = _parent;
             newMarble.transform.position = Random.insideUnitSphere * 100f;
-
             return newMarble;
         }
 
         static MarbleBehavior GetNewMarble()
         {
-            MarbleBehavior marbleToReturn;
-
             if (_poolItems.Count >= 1)
             {
-                marbleToReturn = _poolItems[0];
-                _poolItems.RemoveAt(0);
+                MarbleBehavior marbleToReturn = _poolItems[0];
+                _poolItems.Remove(marbleToReturn);
                 return marbleToReturn;
             }
             else
@@ -60,8 +66,8 @@ namespace Marbles.Pools
             for (int i = 0; i < amount; i++)
             {
                 MarbleBehavior marble = GetNewMarble();
-                marblesDic.Add(marble.Id, marble);
                 marble.Spawn();
+                marblesDic.Add(marble.Id, marble);
             }
         }
 

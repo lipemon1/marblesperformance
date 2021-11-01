@@ -245,6 +245,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ActorPrefab: {fileID: 114441377333821928, guid: 21af970f3943ee4479ad5b086fc7a8a5,
     type: 3}
+  _amountIdle: 0
+  _amountHunting: 0
 --- !u!114 &768071701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -260,6 +262,8 @@ MonoBehaviour:
   marblePrefab: {fileID: 114174159924062632, guid: 0b6004934f3510945a0201df7cf96d13,
     type: 3}
   _currentMarbles: 0
+  _currentMarblesAvailable: 0
+  _marbleDeactivate: 0
 --- !u!114 &768071702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -473,6 +477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2cfec72ec901734dbfdd17913f2c97c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemsOnPool: 0
 --- !u!4 &1548779919
 Transform:
   m_ObjectHideFlags: 0

@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(MarbleContainer))]
 public class ActorContainer : MonoBehaviour
@@ -10,14 +13,15 @@ public class ActorContainer : MonoBehaviour
     private readonly List<ActorBehavior> _actors = new List<ActorBehavior>();
     private MarbleContainer _containerReference;
 
-    public void StartContainer(int worldDataActorsOnStart)
+    public void StartContainer(int worldDataActorsOnStart, float worldDataDetectorSize)
     {
         _containerReference = this.gameObject.GetComponent<MarbleContainer>();
-        for( var i = 0; i < worldDataActorsOnStart; i++ )
+        for( int i = 0; i < worldDataActorsOnStart; i++ )
         {
-            var newActor = Instantiate( ActorPrefab, this.transform );
+            ActorBehavior newActor = Instantiate( ActorPrefab, this.transform );
             newActor.ContainerReference = _containerReference;
             newActor.transform.position = Random.insideUnitSphere * 100f;
+            newActor.SetDetectorSize(worldDataDetectorSize);
             _actors.Add( newActor );
         }
     }

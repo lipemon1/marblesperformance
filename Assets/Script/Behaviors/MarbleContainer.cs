@@ -4,26 +4,27 @@ using System.Collections.Generic;
 using System.Linq;
 using Marbles.Pools;
 using UnityEngine;
+using UnityEngine.Profiling;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(ActorContainer))]
 public class MarbleContainer : MonoBehaviour
 {
+    [SerializeField] bool _debugValues;
     [SerializeField]
     private MarbleBehavior marblePrefab;
 
+    [Header("Debug Values")]
     private Dictionary<Guid,MarbleBehavior> _marbles = new Dictionary<Guid, MarbleBehavior>();
     [SerializeField] int _currentMarbles;
+    [SerializeField] int _currentMarblesAvailable;
+    [SerializeField] int _marbleDeactivate;
 
     public void StartContainer(int startMarblesAmount, int runtimeMarblesAmount, int marblesOffset)
     {
         StopAllCoroutines();
 
-        PoolController.StartMarblesPool(marblePrefab, this.transform, startMarblesAmount, ref _marbles);
-        // for( var i = 0; i < startMarblesAmount; i++ )
-        // {
-        //     GenerateMarble();
-        // }
+        PoolController.StartMarblesPool(marblePrefab, this.transform, (runtimeMarblesAmount + marblesOffset), ref _marbles);
 
         StartCoroutine(SpawnMarbles(runtimeMarblesAmount, marblesOffset));
     }
@@ -35,43 +36,42 @@ public class MarbleContainer : MonoBehaviour
             if( _marbles.Values.Count < runtimeMarblesAmount )
             {
                 PoolController.GetNewMarbles(marblesOffset, ref _marbles);
-                // for( var i = 0; i < marblesOffset; i++ )
-                // {
-                //    GenerateMarble();
-                // }
             }
-            yield return new WaitForEndOfFrame();
-            //yield return new WaitForSeconds( 0.5f );
+            //yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds( 0.1f );
         }
-    }
-
-    private void GenerateMarble()
-    {
-        MarbleBehavior newMarble = Instantiate( marblePrefab, new Vector3( Random.value, Random.value, Random.value ), Quaternion.identity );
-        newMarble.Id = Guid.NewGuid();
-        newMarble.transform.parent = this.transform;
-        newMarble.transform.position = Random.insideUnitSphere * 100f;
-        _marbles.Add( newMarble.Id, newMarble );
     }
 
     public void ClaimMarble( MarbleBehavior marble )
     {
+        Profiler.BeginSample("Checking Key");
         if( _marbles.ContainsKey( marble.Id ) )
         {
+            Profiler.BeginSample("Removing Key");
             _marbles.Remove( marble.Id );
+            Profiler.EndSample();
         }
-        marble.WasClaimed = true;
+        Profiler.EndSample();
+        
+        Profiler.BeginSample("Claim Marble");
+        marble.ClaimThisMarble();
+        Profiler.EndSample();
 
-        _currentMarbles = _marbles.Values.Count;
+        Profiler.BeginSample("Debug Values");
+        if(_debugValues)
+            DebugValues();
+        Profiler.EndSample();
     }
 
-    public MarbleBehavior GetCloseMarbleToPosition( Vector3 position )
+    public Dictionary<Guid, MarbleBehavior>.ValueCollection GetAllMarbles()
     {
-        return _marbles
-            .Values
-            .OrderBy( m => ( position - m.transform.position ).magnitude )
-            .Take(10)
-            .OrderBy( m => m.Id )
-            .FirstOrDefault( m => !m.WasClaimed );
+        return _marbles.Values;
+    }
+
+    private void DebugValues()
+    {
+        _currentMarbles = _marbles.Values.Count;
+        _currentMarblesAvailable = _marbles.Values.Count(m => !m.WasClaimed);
+        _marbleDeactivate = _marbles.Values.Count(m => !m.gameObject.activeInHierarchy);
     }
 }

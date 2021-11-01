@@ -1,33 +1,20 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
 using Marbles.Pools;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MarbleBehavior : MonoBehaviour, IPoolItem
 {
-    bool poolActive;
     const int Steps = 60;
     public Guid Id { get; set; }
     private bool _wasClaimed;
-    public bool WasClaimed
-    {
-        get
-        {
-            return _wasClaimed;
-        }
-        set
-        {
-            if (!poolActive || !this.gameObject.activeInHierarchy) return;
-            
-            if( !_wasClaimed && value )
-            {
-                StartCoroutine( DisplayScore(Steps) );
-            }
-            _wasClaimed = value;
-        }
-    }
+    public bool WasClaimed => _wasClaimed;
+    private bool _beingTarget;
+    public bool BeingTarget => _beingTarget;
+
+    public delegate void OnMarbleClaimedDelegate();
+    public OnMarbleClaimedDelegate OnMarbleClaimed;
 
     [SerializeField]
     private Transform _textboxContainer;
@@ -62,15 +49,37 @@ public class MarbleBehavior : MonoBehaviour, IPoolItem
 
     public void Spawn()
     {
-        poolActive = true;
-        float value = UnityEngine.Random.value * 100f - 25f;
+        transform.position = Random.insideUnitSphere * 100f;
+        float value = Random.value * 100f - 25f;
         _textmesh.text = value.ToString( "##.#" );
-        WasClaimed = false;
+        _wasClaimed = false;
+        _beingTarget = false;
+    }
+
+    public void ClaimThisMarble()
+    {
+        if (!_wasClaimed)
+        {
+            _wasClaimed = true;
+
+            OnMarbleClaimed?.Invoke();
+            
+            if(gameObject.activeInHierarchy)
+                StartCoroutine( DisplayScore(Steps) );
+        }
+        else
+        {
+            Debug.LogError("Trying to claim an already claimed marble");
+        }
+    }
+
+    public void TargetThisMarble()
+    {
+        _beingTarget = true;
     }
 
     public void Despawn()
     {
-        poolActive = false;
         StopAllCoroutines();
         PoolController.DespawnMarble(this);
         // Destroy(this.gameObject);
