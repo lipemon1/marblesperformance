@@ -4,7 +4,7 @@ My goal here was to improve the project performance so we could inset more marbl
 
 # Result Spoiler
 
-We went from 10ms to 40ms o/
+We went from 10ms to 40ms when running with 20,000 marbles on scene
 
 # First steps inside the project
 
