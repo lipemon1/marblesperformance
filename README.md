@@ -2,6 +2,10 @@
 
 My goal here was to improve the project performance so we could inset more marbles, actually, go from 500 to 20,000 at the same time.
 
+# Result Spoiler
+
+We went from 10ms to 40ms o/
+
 # First steps inside the project
 
 When opening the project, the first thing was to try to understand what was going on. After reading what was happening, I separated some behavior that I needed to preserve:
